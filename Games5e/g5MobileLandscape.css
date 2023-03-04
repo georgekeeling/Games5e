@@ -1,0 +1,85 @@
+﻿/* css for mobile */
+body, p {
+    background-color: aquamarine;
+    font-size: 14px;
+}
+
+button {
+    font-size: 16px;
+}
+
+select, option, input[type=text], input[type=password] {
+    font-size: 14px;
+}
+
+input[type=checkbox] {
+    transform: scale(1);
+}
+
+h1 {
+    font-size: 14px
+}
+
+h2 {
+    font-size: 12px
+}
+
+.col1 {
+    position: absolute;
+    left: 10px;
+}
+
+.col2 {
+    position: absolute;
+    left: 120px;
+}
+
+.col3 {
+    position: absolute;
+    left: 340px;
+}
+
+.row1 {
+    position: absolute;
+    top: 30px;
+}
+
+.row2 {
+    position: absolute;
+    top: 60px;
+}
+
+.row3 {
+    position: absolute;
+    top: 90px;
+}
+
+.row4 {
+    position: absolute;
+    top: 120px;
+}
+
+.row5 {
+    position: absolute;
+    top: 150px;
+}
+
+.row6 {
+    position: absolute;
+    top: 180px;
+}
+
+.row7 {
+    position: absolute;
+    top: 210px;
+}
+
+.row8 {
+    position: absolute;
+    top: 240px;
+}
+
+.row9 {
+    position: absolute;
+    top: 270px;
+}

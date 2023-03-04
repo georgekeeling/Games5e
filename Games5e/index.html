@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>5gGames</title>
+  <meta content="The five great games of patience as passed down by Michael Keeling in 2005." name="description" />
+  <link rel="stylesheet" href="g5common.css" />
+  <link rel="icon" type="image/x-icon" href="img/favico.ico">
+  <link id="sCss" rel="stylesheet" href="g5Desk.css" />
+</head>
+<body onload="Initialise()" onresize="table.resize()" onkeydown="mouse.keyPress(event)">
+  <div data-include="resources.html"></div>
+  <div id="mainPage" ontouchmove="mouse.disableTchDefault(event)">
+    <canvas id="myCanvas" width="500" height="200"
+            onmousedown="mouse.down(event)" onmouseup="mouse.up(event)"
+            onmousemove="mouse.move(event)"
+            ontouchmove="mouse.tMove(event)" ontouchstart="mouse.tStart(event)"
+            ontouchend="mouse.tEnd(event)"
+            style="border:1px solid #d3d3d3; background-color:green">
+    </canvas>
+
+    <div>
+      <span><button onclick="table.deal()">New Game</button></span>
+      <span><button id="btnUndo" onclick="undo.undo()" disabled>Undo</button></span>
+      <span><button id="btnRedo" onclick="undo.redo()" disabled>Redo</button></span>
+      <span><button id="btnHint" onclick="selGame.hint()">Hint</button></span>
+      <span><button onclick='toPage("optionsPage")'>Options</button></span>
+      <span><button onclick='toPage("UserZonePage")'>Uzone</button></span>
+      <span><button onclick='toPage("rulesPage")'>Rules</button></span>
+      <span id="testButton" hidden><button onclick="test()">T</button></span>
+      <span id="cardsInfo" hidden> *** </span>
+    </div>
+  </div>
+
+  <div>
+    <div id="optionsPage" hidden ontouchmove="mouse.disableTchDefault(event)">
+      <div class="wholeWindow">
+        <div data-include="options.html"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="UserZonePage" hidden ontouchmove="mouse.disableTchDefaultxVscroll(event)">
+    <div class="wholeWindow">
+      <div data-include="user.html"></div>
+    </div>
+  </div>
+
+  <div id="rulesPage" hidden ontouchmove="mouse.disableTchDefaultxVscroll(event)">
+    <div data-include="rules.html"></div>
+  </div>
+  <script src="js/tests.js"></script>
+  <script src="js/mouse.js"></script>
+  <script src="js/smallClasses.js"></script>
+  <script src="js/games5.js"></script>
+  <script src="js/siteWindow.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/AuntyAlice.js"></script>
+  <script src="js/uncleRemus.js"></script>
+  <script src="js/SandS.js"></script>
+  <script src="js/seniorWrangler.js"></script>
+  <script src="js/kings.js"></script>
+  <script src="js/userZone.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

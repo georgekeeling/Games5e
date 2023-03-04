@@ -1,0 +1,25 @@
+﻿<Project Sdk="Devsense.Php.Sdk">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>43fce1f3-5a8a-4c97-8f6a-bf4d236108ca</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnvName>PHPDev</EnvName>
+    <RuntimeVersion>7.4</RuntimeVersion>
+    <SpecificPageValue>index.html</SpecificPageValue>
+    <StartAction>SpecificPage</StartAction>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="userTester\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="js\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="db\dbInterface.php">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Update="db\topSecret.php">
+      <SubType>Code</SubType>
+    </Content>
+  </ItemGroup>
+</Project>

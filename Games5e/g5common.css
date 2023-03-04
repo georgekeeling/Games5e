@@ -1,0 +1,11 @@
+﻿/* css for all devices */
+/* wholeWindow forces options tab to use whole window, 
+    otherwise ontouchmove event is responded too only in top left of screen
+    the only downside is that unnecessary  scroll bars appear on that page in desktop browsers
+    100vh = viewport height see
+    https://levelup.gitconnected.com/how-to-make-a-div-the-same-height-as-the-browser-window-1ac5f2a71128
+*/
+.wholeWindow{
+    width: 100vw;
+    height: 100vh;
+}

@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- attempting to do with POST insetad of GET following 
+  https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/send
+  -->
+<!--<head>
+  <title>User zone</title>
+  <link rel="icon" type="image/x-icon" href="db/favico.ico">
+  *********************
+  If the line below is in it manages to affect css file loading / unloading
+  <link id="sCss" rel="stylesheet" href="g5Desk.css" />
+</head>-->
+<body>
+  <h1>The five great games of patience. User zone.</h1>
+  <div class="row1 col1">
+    I am
+  </div>
+  <div class="row1 col2">
+    <input type="text" id="userName" tabindex="1" readonly maxlength="20">
+  </div>
+
+  <div class="row1 col3">
+    <button id="nameButton" onclick="userZone.changeUser()">Change</button>
+  </div>
+
+  <div class="row2 col3">
+    <button id="newUserButton" onclick="userZone.newUser()">New User</button>
+  </div>
+
+  <div class="row3 col3">
+    <button id="closeButton" onclick="userZone.close()" tabindex="4">Back to Game</button>
+  </div>
+
+  <div id="RememberMe" class="row2 col1">
+    Remember me:
+  </div>
+  <div class="row2 col2">
+    <input type="checkbox" id="checkMe" onchange="userZone.saveMe()"> (uses cookies)
+  </div>
+
+
+  <div id="pwArea" hidden>
+    <div class="row2 col1">
+      Password
+      <img id="eyeImage" src="img/eyeOpen.png" onclick="userZone.eyeChange()">
+    </div>
+    <div class="row2 col2">
+      <input type="text" id="pWord" tabindex="2" maxlength="20">
+    </div>
+  </div>
+
+  <div id="pwAreaConfirm" hidden>
+    <div class="row3 col1">
+      Repeat Pword
+    </div>
+    <div class="row3 col2">
+      <input type="text" id="pWordConfirm" tabindex="3" maxlength="20">
+    </div>
+  </div>
+
+  <div class="row4 col1">
+    <span id="result">----</span>
+    <span id="yesNoArea" hidden>
+      <button id="yesButton" onclick="userZone.yes()">Yes</button>
+      &nbsp;
+      <button id="noButton" onclick="userZone.no()">No</button>
+    </span>
+  </div>
+
+  <div id="LeagueButtonArea" class="row5 col1" hidden>
+      <button id="LeagueButton" onclick="userZone.showLeague(2)">Show League</button>
+  </div>
+
+  <div class="row6 col1">
+    <span id="resultTable"></span>
+  </div>
+
+
+</body>
+</html>

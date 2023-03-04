@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- attempting to do with POST insetad of GET following 
+  https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/send
+  -->
+<head>
+  <title>User zone</title>
+  <link rel="icon" type="image/x-icon" href="db/favico.ico">
+  <link id="sCss" rel="stylesheet" href="g5Desk.css" />
+</head>
+<body onload="initialiseTester()" onresize="userTester.siteWindow.resize()">
+   DB function tester <br />
+  <p>
+    <label for="fname">User: </label>
+    <input type="text" id="fname" name="fname">
+    <br><br>
+    <button onclick="userTester.action('Start')">New</button>
+    <button onclick="userTester.action('Won')">Won</button>
+    <select name="selGame" id="selGame">
+      <option value="AuntyAlice">Aunty Allis</option>
+      <option value="UncleRemus">Uncle Remus</option>
+      <option value="SandS">Seven and Six</option>
+      <option value="SeniorWrangler">Senior Wrangler</option>
+      <option value="Kings">Kings</option>
+    </select>
+    <br /><br />
+    <button onclick="userTester.action('List')">Show activity</button>
+    <button onclick="userTester.action('Time')">Time test</button>
+    <button onclick="userTester.scoreUser()">User score</button>
+    <button onclick="userTester.starts10()">10 Starts</button>
+    <br /><br />
+    <button onclick="userTester.getLeague()">Get League</button>
+    <button onclick="userTester.ScoreIP()">Score by IP</button>
+  </p>
+  <span id="result">----</span> <br />
+  <script src="js/userTester.js"></script>
+  <script src="js/siteWindow.js"></script>
+  <script src="js/smallClasses.js"></script>
+
+  <script>
+    var userTester;
+    function initialiseTester() {
+      userTester = new UserTester();
+      userTester.initialise();
+
+    }
+  </script>
+
+</body>
+</html>

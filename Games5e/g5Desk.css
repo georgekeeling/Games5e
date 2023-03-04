@@ -1,0 +1,86 @@
+﻿/* css for desktop */
+body {
+    background-color: palevioletred;
+    font-size: 16px;
+}
+
+button {
+    font-size: 16px;
+}
+
+select, option, input[type=text], input[type=password] {
+    font-size: 16px;
+}
+
+div {
+    font-size: 18px;
+}
+
+input[type=checkbox] {
+    transform: scale(1);
+}
+
+h1, h2 {
+    font-size: large;
+}
+
+.col1 {
+    position: absolute;
+    left: 10px;
+}
+
+.col2 {
+    position: absolute;
+    left: 120px;
+}
+
+.col3 {
+    position: absolute;
+    left: 340px;
+}
+
+
+.row1 {
+    position: absolute;
+    top: 70px;
+}
+
+.row2 {
+    position: absolute;
+    top: 100px;
+}
+
+.row3 {
+    position: absolute;
+    top: 130px;
+}
+
+.row4 {
+    position: absolute;
+    top: 160px;
+}
+
+.row5 {
+    position: absolute;
+    top: 190px;
+}
+
+.row6 {
+    position: absolute;
+    top: 220px;
+}
+
+.row7 {
+    position: absolute;
+    top: 250px;
+}
+
+.row8 {
+    position: absolute;
+    top: 280px;
+}
+
+.row9 {
+    position: absolute;
+    top: 310px;
+}
