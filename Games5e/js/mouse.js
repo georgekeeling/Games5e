@@ -129,46 +129,18 @@ class Mouse {
     disableTchDefault(message) {
         // disables back / forward behaviour to go back / forward a page in Chrome
         // and disables scroll down which can cause refresh in chrome / android and safari
-        message.preventDefault();
-    }
-    TEST_disableTchDefaultxVscroll(message) {
-        // variation on disableTchDefault which allows default vertical scrolling except scroll down at top
-        // this only seemed worked on Chrome and Edge so I have now reverted to the older version below.
-        if (message.defaultPrevented) {
-            console.log("default Prevented");
-        }
-        else {
-            console.log("default not Prevented");
-        }
-        if (message.touches.length != 1) {
+        // if two (or more) fingers used then allow default behaviour, which is zoom in / out
+        // this is necessary because user zone can zoom when name / password being entered
+        // and we need to get back to 100% zoom
+        if (message.touches.length == 1) {
             message.preventDefault();
-            console.log("Prevent default");
-            return;
-        }
-        if (Math.abs(this.prevTouchX - message.touches[0].clientX) > 2) {
-            preventDefault(this);
-            return;
-        }
-        if (this.prevTouchY < message.touches[0].clientY) {
-            // scrolling down 
-            if (window.scrollY == 0) {
-                preventDefault(this);
-                return;
-            }
-        }
-        this.prevTouchX = message.touches[0].clientX;
-        this.prevTouchY = message.touches[0].clientY;
-        console.log("Use default " + message.touches[0].clientX + " , " + message.touches[0].clientY);
-        function preventDefault(myThis) {
-            myThis.prevTouchX = message.touches[0].clientX;
-            myThis.prevTouchY = message.touches[0].clientY;
-            message.preventDefault();
-            console.log("Prevent default " + message.touches[0].clientX + " , " + message.touches[0].clientY);
         }
     }
     disableTchDefaultxVscroll(message) {
         // variation on disableTchDefault which does vertical scrolling rather badly in rules page
-        message.preventDefault();
+        if (message.touches.length == 1) {
+            message.preventDefault();
+        }
         if (message.touches.length == 0) {
             return;
         }
@@ -184,6 +156,40 @@ class Mouse {
         }
         this.prevTouchY = message.touches[0].clientY;
     }
+    //TEST_disableTchDefaultxVscroll(message: TouchEvent) {
+    //  // variation on disableTchDefault which allows default vertical scrolling except scroll down at top
+    //  // this only seemed worked on Chrome and Edge so I have now reverted to the older version below.
+    //  if (message.defaultPrevented) {
+    //    console.log("default Prevented");
+    //  } else {
+    //    console.log("default not Prevented");
+    //  }
+    //  if (message.touches.length != 1) {
+    //    message.preventDefault();
+    //    console.log("Prevent default");
+    //    return;
+    //  }
+    //  if (Math.abs(this.prevTouchX - message.touches[0].clientX) > 2) {
+    //    preventDefault(this);
+    //    return;
+    //  }
+    //  if (this.prevTouchY < message.touches[0].clientY) {
+    //    // scrolling down 
+    //    if (window.scrollY == 0) {
+    //      preventDefault(this);
+    //      return;
+    //    }
+    //  }
+    //  this.prevTouchX = message.touches[0].clientX;
+    //  this.prevTouchY = message.touches[0].clientY;
+    //  console.log("Use default " + message.touches[0].clientX + " , " + message.touches[0].clientY);
+    //  function preventDefault(myThis: Mouse) {
+    //    myThis.prevTouchX = message.touches[0].clientX;
+    //    myThis.prevTouchY = message.touches[0].clientY;
+    //    message.preventDefault();
+    //    console.log("Prevent default " + message.touches[0].clientX + " , " + message.touches[0].clientY);
+    //  }
+    //}
     // ****************************************
     // private functions
     // ****************************************

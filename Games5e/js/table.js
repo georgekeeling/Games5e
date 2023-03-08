@@ -503,11 +503,15 @@ class Table {
         this.setCtxFontSize(this.siteWindow.welcomFont);
         spacing += 3;
         let baseY = table.height / 2 - spacing * 3;
-        this.ctx.fillText("Welcome " + choices.user + " to", this.width / 2, baseY + spacing);
+        let uName = " " + choices.user;
+        if (uName == " unknown") {
+            uName = "";
+        }
+        this.ctx.fillText("Welcome" + uName + " to", this.width / 2, baseY + spacing);
         this.ctx.fillText("the Five Great Games", this.width / 2, baseY + spacing * 2);
         this.ctx.fillText("of patience", this.width / 2, baseY + spacing * 3);
         this.setCtxFontSize(this.siteWindow.welcomFont / 2);
-        this.ctx.fillText("3.3.23 Come to the User zone!", this.width / 2, baseY + spacing * 4);
+        this.ctx.fillText("xx.x.xxx", this.width / 2, baseY + spacing * 4);
         this.setCtxFontSize(this.siteWindow.welcomFont);
         this.ctx.font = this.siteWindow.welcomFont + "px ";
         baseY += spacing;
