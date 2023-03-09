@@ -329,7 +329,7 @@ class UpdateDB {
   }
 
   post(result: string) {
-    // post win / lose to database
+    // post Won / Start to database
     this.xmlhttpDo(selGame.player + "/Post/" + selGame.codeName + "/" + result, handleResponse);
 
     function handleResponse (response: string) {
