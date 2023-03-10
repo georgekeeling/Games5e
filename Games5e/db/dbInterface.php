@@ -193,15 +193,16 @@
 
   function columnHeading (int $col, string $text, bool $sortCol) : string {
     // produce heading like
-    // $heading = '<th align="left">Time <img src="downArrow.png" onclick="sort(1)" > </th>';
+    // $heading = '<th align="left">Time <img src="downArrow.png" onclick="userTester.sort(1)" > </th>';
     //                              ****           *************                *
+    // It would be better if the callback function was parameter sent by client.
     $heading = '<th align="left">' . $text . ' <img src="';
     if ($sortCol){
       $heading .= 'img/downArrow.png';
     } else {
       $heading .= 'img/downArrowDis.png';
     }
-    $heading .= '" onclick="sort(' . $col . ')" > </th>';
+    $heading .= '" onclick="userTester.sort(' . $col . ')" > </th>';
 
     return $heading;
   }
