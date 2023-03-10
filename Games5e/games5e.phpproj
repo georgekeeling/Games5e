@@ -5,7 +5,7 @@
   <PropertyGroup>
     <EnvName>PHPDev</EnvName>
     <RuntimeVersion>7.4</RuntimeVersion>
-    <SpecificPageValue>userTester.html</SpecificPageValue>
+    <SpecificPageValue>index.html</SpecificPageValue>
     <StartAction>SpecificPage</StartAction>
   </PropertyGroup>
   <ItemGroup>
