@@ -268,7 +268,41 @@ class Pile {
         return this.cards[this.cards.length - 1];
     }
     moveTo(x, y) {
-        this.moveBy(x - this.x, y - this.y);
+        // this.moveBy(x - this.x, y - this.y); Gets wrong answer by ~.0000000000001 15% of time, See tests / SSbug230312
+        // This, more complex version, uses the input x,y wherever possible
+        let origX = this.x;
+        let dx = x - this.x;
+        let origY = this.y;
+        let dy = y - this.y;
+        this.area.left = moveToX(this.area.left);
+        this.area.right = moveToX(this.area.right);
+        this.area.top = moveToY(this.area.top);
+        this.area.bottom = moveToY(this.area.bottom);
+        this.x = moveToX(this.x);
+        this.y = moveToY(this.y);
+        for (let cardI = 0; cardI < this.cards.length; cardI++) {
+            let card = this.cards[cardI];
+            card.x = moveToX(card.x);
+            card.y = moveToY(card.y);
+            card.area.left = moveToX(card.area.left);
+            card.area.top = moveToY(card.area.top);
+            card.area.right = moveToX(card.area.right);
+            card.area.bottom = moveToY(card.area.bottom);
+        }
+        function moveToX(thisX) {
+            if (thisX == origX) {
+                return x;
+            }
+            ;
+            return thisX + dx;
+        }
+        function moveToY(thisY) {
+            if (thisY == origY) {
+                return y;
+            }
+            ;
+            return thisY + dy;
+        }
     }
     moveBy(dx, dy) {
         this.area.left += dx;
