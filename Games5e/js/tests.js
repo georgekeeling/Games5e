@@ -4,7 +4,60 @@
  * Search for 'end game' to find all five
  */
 function test() {
-    endGames();
+    SSbug230312();
+}
+function SSbug230312() {
+    /*
+    Bug in seven and six spotted 12/3/23
+    Twice in game (and once a few weeks ago) I had a run (in pile 0) that I could
+    not move. Second time the run was like 654321. I could move 4321. Not sure
+    where split was first time but it was similar and in pile 0.
+  
+    Theory is that, in the end, both SevenAndSix.click and SevenAndSix.requestDrop
+    ultimately use dragPile.moveTo(x,y) to move the dragpile into position.
+    The former via table.flyPile, the latter directly.
+  
+    The x coordinate is copied from the card they are landing on.
+  
+    moveTo does a subtraction then invokes moveBy. POSSIBLY the subtraction causes
+    a rounding error sometimes. And so the pile that is apparently lined up is not quite.
+  
+    To see if this can happen, we must create a pile at some random x between 0 and 1000
+    Then move it to another random x using moveTo and testing if it gets exactly to that x
+    in 100 tests got these 14 errors:
+    Error (at i=3) moving from 724.1456587913075 to 56.68108298501748
+    Error (at i=9) moving from 881.0220385983209 to 190.59941557168992
+    Error (at i=34) moving from 613.9658583093858 to 247.3480235183334
+    Error (at i=38) moving from 855.3057788213965 to 239.14001522303334
+    Error (at i=43) moving from 885.5120428102902 to 130.53647171235443
+    Error (at i=49) moving from 126.449625768859 to 819.3024785546762
+    Error (at i=50) moving from 819.3024785546763 to 226.74563967724143
+    Error (at i=52) moving from 680.6673370377441 to 194.05285629289867
+    Error (at i=77) moving from 811.1076349047671 to 142.79580421872944
+    Error (at i=79) moving from 896.5416875944522 to 143.07106698007553
+    Error (at i=83) moving from 839.9913406320723 to 176.9175337070365
+    Error (at i=87) moving from 428.80568662494113 to 35.96894967581361
+    Error (at i=96) moving from 500.5888665753512 to 115.50620772133684
+    14 errors found in 100 tests. Rate = 14%
+  
+    Rate was 15% over 1000 tests
+  
+    After fix rate was 0% :-)
+    */
+    let testPile = new Pile(1, 10, 10); // creates pile with 1 card in it at 10,10
+    let testCard = testPile.cards[0];
+    let errors = 0;
+    let tests = 100;
+    for (let i = 1; i <= tests; i++) {
+        let fromX = testCard.x;
+        let toX = Math.random() * 900;
+        testPile.moveTo(toX, 20);
+        if (toX != testCard.x) {
+            errors++;
+            console.log("Error (at i=" + i + ") moving from " + fromX + " to " + toX);
+        }
+    }
+    console.log(errors + " errors found in " + tests + " tests. Rate = " + Math.round(100 * errors / tests) + "%");
 }
 function dramaticDeal() {
     // deal in 7&6 or UR when ace falls on K-2 sequence thus creating a book

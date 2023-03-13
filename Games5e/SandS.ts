@@ -78,8 +78,6 @@ class SevenAndSix extends Game {
 
     if (pile.cards.length == 0) {
       if (dragPile.cards[0].rank() != 13) { return false }
-      if (dragPile.cards.length == 13) {
-      }
       dragPile.moveTo(pile.x, pile.y);
       finishUp(this);
       return true;
