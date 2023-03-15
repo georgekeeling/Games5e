@@ -25,6 +25,22 @@ class Game {
   constructor() {
   }
 
+  gameStateSet(newState: GameState) {     // do not override
+    if (newState == GameState.Playing) {
+      addEventListener("beforeunload", this.unloadFunc);
+    } else {
+      removeEventListener("beforeunload", this.unloadFunc);
+    }
+    this.gameState = newState;
+  }
+
+  unloadFunc(event: BeforeUnloadEvent) {    // do not override
+    // calling this.hint() suppressed message
+    // this.hint();            // may change game state. Rather too late!
+    event.returnValue = "WTF?";
+  }
+
+
   undoExtras() {
     // anything extra needed after undo in a game. Aunty Alice uses it
   }
@@ -89,7 +105,7 @@ class Game {
   }
 
   hintEasy(): boolean {
-    // check quick exit conditions. Should not be overrisen
+    // check quick exit conditions. Should not be overriden
     if (table.isLocked()) { return true}
     if (table.piles.length == 0) {
       this.hintShow("New Game");
@@ -107,7 +123,7 @@ class Game {
     } else {
       if (table.piles[this.talonPileI].cards.length == 0) {
         theHint = "You lost. New Game";
-        selGame.gameState = GameState.Lost;
+        this.gameStateSet(GameState.Lost);
       }
     }
     this.hintShow(theHint);

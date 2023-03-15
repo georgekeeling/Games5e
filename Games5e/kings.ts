@@ -508,7 +508,7 @@ class Kings extends Game{
       theHint = "You won. New Game";
     } else {
       if (table.piles[KiFaceDownPileI].cards.length == 0) {
-        selGame.gameState = GameState.Lost;
+        this.gameStateSet(GameState.Lost);
         theHint = "You lost. New Game";
       }
     }

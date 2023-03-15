@@ -19,6 +19,20 @@ class Game {
         this.cheated = 0; // count of cheats
         this.player = "unknown";
     }
+    gameStateSet(newState) {
+        if (newState == GameState.Playing) {
+            addEventListener("beforeunload", this.unloadFunc);
+        }
+        else {
+            removeEventListener("beforeunload", this.unloadFunc);
+        }
+        this.gameState = newState;
+    }
+    unloadFunc(event) {
+        // calling this.hint() suppressed message
+        // this.hint();            // may change game state. Rather too late!
+        event.returnValue = "WTF?";
+    }
     undoExtras() {
         // anything extra needed after undo in a game. Aunty Alice uses it
     }
@@ -73,7 +87,7 @@ class Game {
         // give the pesky user a hint.
     }
     hintEasy() {
-        // check quick exit conditions. Should not be overrisen
+        // check quick exit conditions. Should not be overriden
         if (table.isLocked()) {
             return true;
         }
@@ -92,7 +106,7 @@ class Game {
         else {
             if (table.piles[this.talonPileI].cards.length == 0) {
                 theHint = "You lost. New Game";
-                selGame.gameState = GameState.Lost;
+                this.gameStateSet(GameState.Lost);
             }
         }
         this.hintShow(theHint);

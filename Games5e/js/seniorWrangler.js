@@ -337,7 +337,7 @@ class SeniorWrangler extends Game {
                     theHint = "Deal. (Click / tap in long piles at top).";
                 }
                 else {
-                    selGame.gameState = GameState.Lost;
+                    this.gameStateSet(GameState.Lost);
                     theHint = "You lost. New Game";
                 }
             }

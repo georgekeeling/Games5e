@@ -478,7 +478,11 @@ class Table {
       pile.recalcArea();
     }
     selGame.resizeExtras();
-    this.showCards();
+    if (selGame.gameState == GameState.Welcome) {
+      this.welcome();
+    } else {
+      this.showCards();
+    }
     document.getElementById("cardsInfo").innerHTML =
       " w: " + this.width + " h: " + this.height;
   }
@@ -571,10 +575,9 @@ class Table {
     }
     this.ctx.fillText(text, this.width / 2, messageY + fontSize);
     sound.soundTrumpet();
-    selGame.gameState = GameState.Won;
     undo.reset();
     updateDB.post(DBmessage);
-    selGame.gameState = GameState.Won;
+    selGame.gameStateSet(GameState.Won);
   }
 
   welcome() {
@@ -598,7 +601,7 @@ class Table {
     baseY += spacing;
     this.ctx.fillText("Next up:", this.width / 2, baseY + spacing * 5);
     this.ctx.fillText(selGame.name, this.width / 2, baseY + spacing * 6);
-    selGame.gameState = GameState.Welcome;
+    selGame.gameStateSet(GameState.Welcome);
   }
 
   setCtxFontSize(size: number) {
@@ -713,7 +716,7 @@ class Table {
 
   deal0() {
     // initial deal
-    selGame.gameState = GameState.Playing;
+    selGame.gameStateSet(GameState.Playing);
     selGame.player = choices.user;
     updateDB.post("Start");
     selGame.cheated = 0;
