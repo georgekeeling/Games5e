@@ -325,12 +325,13 @@ class SeniorWrangler extends Game {
     if (table.piles.length == 0) {
       theHint = "New Game"
     } else {
-      if (table.youWon) {
+      if (selGame.gameState == GameState.Won) {
         theHint = "You won. New Game"
       } else {
         if (table.gameData < 8) {
           theHint = "Deal. (Click / tap in long piles at top)."
         } else {
+          selGame.gameState = GameState.Lost;
           theHint = "You lost. New Game"
         }
       }

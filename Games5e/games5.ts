@@ -6,7 +6,8 @@
 enum GameState {
   Welcome,    // not started, welcome screen up
   Playing,    // started and in progress (by Game.player)
-  Won         // won (by Game.player)
+  Won,        // won (by Game.player)
+  Lost        // lost - can be discovered by hinter
 }
 
 class Game {
@@ -101,10 +102,13 @@ class Game {
   {
     // last resort, possibly called by hint functions.
     let theHint = "Deal";
-    if (table.youWon) {
+    if (selGame.gameState == GameState.Won) {
       theHint = "You won. New Game";
     } else {
-      if (table.piles[this.talonPileI].cards.length == 0) { theHint = "You lost. New Game" }
+      if (table.piles[this.talonPileI].cards.length == 0) {
+        theHint = "You lost. New Game";
+        selGame.gameState = GameState.Lost;
+      }
     }
     this.hintShow(theHint);
   }

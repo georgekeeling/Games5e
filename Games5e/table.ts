@@ -416,7 +416,6 @@ class Table {
   width = 1000;
   height = 600;
   ctx: CanvasRenderingContext2D;
-  youWon = false;
   siteWindow: SiteWindow;
   lockLevel = 0;
   gameData: number;     // gamedata that needs to be faved / restored through undos
@@ -441,7 +440,6 @@ class Table {
     this.width = fromTable.width;
     this.height = fromTable.height;
     this.ctx = fromTable.ctx;
-    this.youWon = fromTable.youWon;
     this.siteWindow = fromTable.siteWindow;
     this.lockLevel = fromTable.lockLevel
     this.gameData = fromTable.gameData;
@@ -576,7 +574,7 @@ class Table {
     selGame.gameState = GameState.Won;
     undo.reset();
     updateDB.post(DBmessage);
-    this.youWon = true;
+    selGame.gameState = GameState.Won;
   }
 
   welcome() {
@@ -701,9 +699,11 @@ class Table {
   }
 
   checkDealOK(): boolean{
-    if (table.piles.length == 0 || table.youWon) { return true }
+    selGame.hint();     // Might declare game lost.
+    if (selGame.gameState != GameState.Playing) { return true }
     return confirm("This will deal a new hand.\n" +
-      "That cannot be undone.\nPress OK to proceed.");
+      "That cannot be undone.\nPress OK to proceed.\n" +
+      "Cancel will give you a hint.");
   }
 
   deal() {
@@ -713,7 +713,6 @@ class Table {
 
   deal0() {
     // initial deal
-    this.youWon = false;
     selGame.gameState = GameState.Playing;
     selGame.player = choices.user;
     updateDB.post("Start");

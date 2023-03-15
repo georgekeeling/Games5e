@@ -504,10 +504,13 @@ class Kings extends Game{
       return;
     }
     let theHint = "Click / tap face down pile";
-    if (table.youWon) {
+    if (selGame.gameState == GameState.Won) {
       theHint = "You won. New Game";
     } else {
-      if (table.piles[KiFaceDownPileI].cards.length == 0) { theHint = "You lost. New Game" }
+      if (table.piles[KiFaceDownPileI].cards.length == 0) {
+        selGame.gameState = GameState.Lost;
+        theHint = "You lost. New Game";
+      }
     }
     this.hintShow(theHint);
     return;

@@ -4,10 +4,8 @@
  * Search for 'end game' to find all five
  */
 function test() {
-  SSbug230312();
+  endGames();
 }
-
-
 
 function SSbug230312() {
   /*

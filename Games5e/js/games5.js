@@ -6,7 +6,8 @@ var GameState;
 (function (GameState) {
     GameState[GameState["Welcome"] = 0] = "Welcome";
     GameState[GameState["Playing"] = 1] = "Playing";
-    GameState[GameState["Won"] = 2] = "Won"; // won (by Game.player)
+    GameState[GameState["Won"] = 2] = "Won";
+    GameState[GameState["Lost"] = 3] = "Lost"; // lost - can be discovered by hinter
 })(GameState || (GameState = {}));
 class Game {
     constructor() {
@@ -85,12 +86,13 @@ class Game {
     hintDeal() {
         // last resort, possibly called by hint functions.
         let theHint = "Deal";
-        if (table.youWon) {
+        if (selGame.gameState == GameState.Won) {
             theHint = "You won. New Game";
         }
         else {
             if (table.piles[this.talonPileI].cards.length == 0) {
                 theHint = "You lost. New Game";
+                selGame.gameState = GameState.Lost;
             }
         }
         this.hintShow(theHint);

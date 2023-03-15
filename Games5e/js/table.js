@@ -372,7 +372,6 @@ class Table {
         this.SVGheight = 540;
         this.width = 1000;
         this.height = 600;
-        this.youWon = false;
         this.lockLevel = 0;
         this.piles = []; // piles of cards on the table. Obviously!
         if (empty) {
@@ -392,7 +391,6 @@ class Table {
         this.width = fromTable.width;
         this.height = fromTable.height;
         this.ctx = fromTable.ctx;
-        this.youWon = fromTable.youWon;
         this.siteWindow = fromTable.siteWindow;
         this.lockLevel = fromTable.lockLevel;
         this.gameData = fromTable.gameData;
@@ -528,7 +526,7 @@ class Table {
         selGame.gameState = GameState.Won;
         undo.reset();
         updateDB.post(DBmessage);
-        this.youWon = true;
+        selGame.gameState = GameState.Won;
     }
     welcome() {
         this.ctx.clearRect(0, 0, this.width, this.height);
@@ -654,11 +652,13 @@ class Table {
         this.piles[pile].addCardP(cardIx, x, y, faceUp, angle);
     }
     checkDealOK() {
-        if (table.piles.length == 0 || table.youWon) {
+        selGame.hint(); // Might declare game lost.
+        if (selGame.gameState != GameState.Playing) {
             return true;
         }
         return confirm("This will deal a new hand.\n" +
-            "That cannot be undone.\nPress OK to proceed.");
+            "That cannot be undone.\nPress OK to proceed.\n" +
+            "Cancel will give you a hint.");
     }
     deal() {
         if (table.isLocked()) {
@@ -670,7 +670,6 @@ class Table {
     }
     deal0() {
         // initial deal
-        this.youWon = false;
         selGame.gameState = GameState.Playing;
         selGame.player = choices.user;
         updateDB.post("Start");

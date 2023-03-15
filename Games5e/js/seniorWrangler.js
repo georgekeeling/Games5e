@@ -329,7 +329,7 @@ class SeniorWrangler extends Game {
             theHint = "New Game";
         }
         else {
-            if (table.youWon) {
+            if (selGame.gameState == GameState.Won) {
                 theHint = "You won. New Game";
             }
             else {
@@ -337,6 +337,7 @@ class SeniorWrangler extends Game {
                     theHint = "Deal. (Click / tap in long piles at top).";
                 }
                 else {
+                    selGame.gameState = GameState.Lost;
                     theHint = "You lost. New Game";
                 }
             }
