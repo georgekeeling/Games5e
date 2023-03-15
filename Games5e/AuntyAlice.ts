@@ -4,7 +4,7 @@
  * piles 
  * 0-7      2's row
  * 8-15     3's row
- * 16-22    4's row
+ * 16-23    4's row
  * 24-31    bottom row (rubbish row as MK calls it)
  * 32 talon
  * 33 discard pile for aces
@@ -343,6 +343,9 @@ class AuntyAlice extends Game {
         let pile = table.piles[pileI];
         if (pile.cards.length > 0) {
           if (pile.endCard().rank() == 1) {
+            if (pile0 < 24) {
+              if (findFiller(pileI) == -1) { continue };
+            }
             table.flyOutBack(pile, pile.cards.length - 1, table.piles[acePileI]);
             return true;
           }
@@ -353,34 +356,58 @@ class AuntyAlice extends Game {
 
     // if there is an empty pile and a card that can move to it, hint that or hint undo
     if (this.emptyPileI != -1) {
-      let epRow = Math.floor(this.emptyPileI / 8);
-      let rankNeeded = epRow + 2;
-      for (let row = 0; row < 4; row++) {
-        if (row == epRow) { continue };
-        for (let col = 0; col < 8; col++) {
-          let pile = table.piles[row * 8 + col];
-          if (pile.cards.length != 1) { continue };
-          if (pile.cards[0].rank() == rankNeeded) {
-            table.flyOutBack(pile, 0, table.piles[this.emptyPileI]);
-            return;
-          }
-        }
+      let fromPileI = findFiller(this.emptyPileI);
+      if (fromPileI == -1) {
+        this.hintShow("Undo");
+        return;
       }
-      this.hintShow("Undo");
+      let pile = table.piles[fromPileI];
+      table.flyOutBack(pile, pile.cards.length - 1, table.piles[this.emptyPileI]);
       return;
     }
 
     // if there is an ace in the bottom row, hint it
-    if (checkAces(24, 32)) {return }
+    if (checkAces(24, 32)) { return }
 
-    // if there is a card in the bottom row which will go on a card in the top three rows, hint it
-    if (checkCard(24, 32)) { return }
-
-    // if there is an ace in another row, hint it
-    if (checkAces(0, 24)) { return }
-
-    // if there is a card in the top three rows which will go on another card in the top three rows, hint it
-    if (checkCard(0, 24)) { return }
+    // its not clear which of the next three is best done first ...
+    let chooser = Math.floor (Math.random() * 6);
+    switch (chooser) {
+      case 0:
+        if (checkCard(24, 32)) { return }
+        if (checkCard(0, 24)) { return }
+        if (checkAces(0, 24)) { return }
+        break;
+      case 1:
+        if (checkCard(24, 32)) { return }
+        if (checkAces(0, 24)) { return }
+        if (checkCard(0, 24)) { return }
+        break;
+      case 2:
+        if (checkCard(0, 24)) { return }
+        if (checkCard(24, 32)) { return }
+        if (checkAces(0, 24)) { return }
+        break;
+      case 3:
+        if (checkCard(0, 24)) { return }
+        if (checkAces(0, 24)) { return }
+        if (checkCard(24, 32)) { return }
+        break;
+      case 4:
+        if (checkAces(0, 24)) { return }
+        if (checkCard(24, 32)) { return }
+        if (checkCard(0, 24)) { return }
+        break;
+      case 5:
+        if (checkAces(0, 24)) { return }
+        if (checkCard(0, 24)) { return }
+        if (checkCard(24, 32)) { return }
+        break;
+      default:
+        if (checkAces(0, 24)) { return }
+        if (checkCard(0, 24)) { return }
+        if (checkCard(24, 32)) { return }
+        break;
+    }
 
     // nothing left
     this.hintDeal();
@@ -407,6 +434,10 @@ class AuntyAlice extends Game {
               if (targetCard.rank() == rankCandi - 3 && targetCard.suit() == suitCandi) {
                 // almost there, but not if targetCard is alone and Candi card rank > 7
                 if (targetPile.cards.length == 1 && rankCandi > 7) { continue }
+                // nor if space left by target card cannot be filled
+                if (pile0 == 0) {
+                  if (findFiller(pileI) == -1) { continue };
+                }
                 table.flyOutBack(pile, pile.cards.length - 1, targetPile);
                 return true;
               }
@@ -415,6 +446,42 @@ class AuntyAlice extends Game {
         }
       }
       return false;
+    }
+
+    function findFiller(fillPileI: number, ignorePiles?: number[]): number {
+      // find card to go into empty spot at fillPileI. Return the card's pileI or -1 if none
+      // if found card is in top three rows, must also be possible to fill its spot etc etc
+      // eventually return -1 or have chain ending in bottom row (but return first card in chain).
+      if (typeof (ignorePiles) == 'undefined') {
+        ignorePiles = [];
+      }
+      ignorePiles[ignorePiles.length] = fillPileI;
+      if (ignorePiles.length > 26) {
+        alert("Something went wrong. AA hinter overflow.\n" +
+          "Please take screenshot and tell george.");
+        return -1;
+      }
+      let fillPileRow = Math.floor(fillPileI / 8);
+      let rankNeeded = fillPileRow + 2;
+      let randomOrderPiles = [];
+      pack.makeShuffledArray(randomOrderPiles, 32);
+      for (let candiPileI of randomOrderPiles) {
+        if (ignorePiles.indexOf(candiPileI) != -1) { continue };
+        let row = Math.floor(candiPileI / 8);
+        if (row == fillPileRow) { continue };
+        let pile = table.piles[candiPileI];
+        if (pile.cards.length != 1 && row < 3) { continue };
+        if (pile.cards.length == 0) { continue };
+        if (pile.endCard().rank() == rankNeeded) {
+          if (candiPileI >= 24) {
+            return candiPileI;
+          }
+          if (findFiller(candiPileI, ignorePiles) != -1) {
+            return candiPileI;
+          }
+        }
+      }
+      return - 1;
     }
 
   }
