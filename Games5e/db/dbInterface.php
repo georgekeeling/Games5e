@@ -267,17 +267,20 @@
 
     if ($result->num_rows > 0) {
       while($row = $result->fetch_assoc()) {
-        $user = $row["Name"];
-        $sql = "SELECT Time, GameCode, Type FROM Action WHERE VisitorID = '" . $user . "';";
-        $LeaguePoints = score ($conn, $sql , 0, true, "");
-        echo $user . "/";
-        for ($col = 0; $col <= 5; $col++) {
-          echo $LeaguePoints[$col] . "/";
+        getUserScore ($conn, $row["Name"]);
         }
-      }
     }
+    getUserScore ($conn, "Unknown");
     $conn->close();
+  }
 
+  function getUserScore (mysqli $conn, string $user) {
+    $sql = "SELECT Time, GameCode, Type FROM Action WHERE VisitorID = '" . $user . "';";
+    $LeaguePoints = score ($conn, $sql , 0, true, "");
+    echo $user . "/";
+    for ($col = 0; $col <= 5; $col++) {
+      echo $LeaguePoints[$col] . "/";
+    }
   }
 
   function score (mysqli $conn, string $sql, int $timeDiff, bool $rl, string $user) : array {
