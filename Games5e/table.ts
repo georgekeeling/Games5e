@@ -597,7 +597,7 @@ class Table {
     this.ctx.fillText("the Five Great Games", this.width / 2, baseY + spacing * 2);
     this.ctx.fillText("of patience", this.width / 2, baseY + spacing * 3);
     this.setCtxFontSize(this.siteWindow.welcomFont / 2);
-    this.ctx.fillText("xx.x.xxx", this.width / 2, baseY + spacing * 4);
+    this.ctx.fillText("16.3.23", this.width / 2, baseY + spacing * 4);
     this.setCtxFontSize(this.siteWindow.welcomFont);
     this.ctx.font = this.siteWindow.welcomFont + "px ";
     baseY += spacing;
