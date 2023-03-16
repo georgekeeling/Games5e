@@ -373,6 +373,7 @@ class Table {
         this.width = 1000;
         this.height = 600;
         this.lockLevel = 0;
+        this.cancelFlyOutBack = false;
         this.piles = []; // piles of cards on the table. Obviously!
         if (empty) {
             return;
@@ -394,6 +395,7 @@ class Table {
         this.siteWindow = fromTable.siteWindow;
         this.lockLevel = fromTable.lockLevel;
         this.gameData = fromTable.gameData;
+        this.cancelFlyOutBack = fromTable.cancelFlyOutBack;
         for (let i = 0; i < fromTable.piles.length; i++) {
             this.piles[i] = new Pile;
             this.piles[i].clone(fromTable.piles[i]);
@@ -656,13 +658,18 @@ class Table {
         this.piles[pile].addCardP(cardIx, x, y, faceUp, angle);
     }
     checkDealOK() {
-        selGame.hint(); // Might declare game lost.
+        selGame.hint(); // Might declare game lost and commence flyOutBack
         if (selGame.gameState != GameState.Playing) {
             return true;
         }
-        return confirm("This will deal a new hand.\n" +
+        let answer = confirm("This will deal a new hand.\n" +
             "That cannot be undone.\nPress OK to proceed.\n" +
             "Cancel will give you a hint.");
+        if (!answer) {
+            return answer; // new game cancelled, possible flyOutBack in progress
+        }
+        this.cancelFlyOutBack = true;
+        return answer;
     }
     deal() {
         if (table.isLocked()) {
@@ -835,6 +842,11 @@ class Table {
         // fly cards from sourcePile, sourceCardI to bottom of targetPile, then fly them back
         // maybe more than one card from sourcePile.
         // if extract1Card = true, extract sourceCardI from sourdePile and just fly that out and back
+        if (this.cancelFlyOutBack) {
+            // cancelled by deal0 / New Game
+            this.cancelFlyOutBack = false;
+            return;
+        }
         if (typeof (yOffset) == 'undefined') {
             yOffset = 0;
         }
@@ -875,6 +887,13 @@ class Table {
         table.lock();
         const id = setInterval(fly1, interval);
         function fly1() {
+            if (table.cancelFlyOutBack) {
+                // cancelled by deal0 = New Game
+                table.cancelFlyOutBack = false;
+                clearInterval(id);
+                table.unlock();
+                return;
+            }
             if (pos == moves / 2) {
                 // fly back
                 incX = -incX;
