@@ -80,7 +80,6 @@ class Card {
         this.y = yPos;
         this.faceUp = faceUp;
         this.angle = angle;
-        this.visible = true;
         this.area = new Area(this.x, this.y, xPos + table.cardWidth, yPos + table.cardHeight);
         this.angle = this.angle % 180; // range +/- 179°
         if (this.angle < 0) {
@@ -180,14 +179,6 @@ class Pile {
         }
         ;
         this.cards[newI] = new Card(this, cardI, x, y, faceUp, angle);
-        this.cards[newI].visible = true;
-        if (newI > 0) {
-            if (this.cards[newI].x == this.cards[newI - 1].x &&
-                this.cards[newI].y == this.cards[newI - 1].y &&
-                this.cards[newI].angle == this.cards[newI - 1].angle) {
-                this.cards[newI - 1].visible = false;
-            }
-        }
         this.recalcArea();
     }
     recalcArea() {
@@ -219,9 +210,7 @@ class Pile {
             thisCard.y = prevCard.y;
             thisCard.area.top = prevCard.area.top;
             thisCard.area.bottom = prevCard.area.bottom;
-            prevCard.visible = false;
         }
-        prevCard.visible = true;
         thisCard.y += table.yStep / 4;
         thisCard.area.top += table.yStep / 4;
         thisCard.area.bottom += table.yStep / 4;
@@ -248,7 +237,6 @@ class Pile {
             thisCard.y = prevCard.y + table.yStep;
             thisCard.area.top = prevCard.area.top + table.yStep;
             thisCard.area.bottom = prevCard.area.bottom + table.yStep;
-            prevCard.visible = true;
         }
         if (toCardI < this.cards.length - 1) {
             // there are more cards to go
@@ -549,7 +537,7 @@ class Table {
         this.ctx.fillText("the Five Great Games", this.width / 2, baseY + spacing * 2);
         this.ctx.fillText("of patience", this.width / 2, baseY + spacing * 3);
         this.setCtxFontSize(this.siteWindow.welcomFont / 2);
-        this.ctx.fillText("xx.x.xxx", this.width / 2, baseY + spacing * 4);
+        this.ctx.fillText("23.xx.xx", this.width / 2, baseY + spacing * 4);
         this.setCtxFontSize(this.siteWindow.welcomFont);
         this.ctx.font = this.siteWindow.welcomFont + "px ";
         baseY += spacing;
@@ -598,10 +586,14 @@ class Table {
             let hadFirstVisible = false;
             for (let cardI = 0; cardI <= aPile.cards.length - 1; cardI++) {
                 let thisCard = aPile.cards[cardI];
-                if (!thisCard.visible) {
-                    continue;
+                if (cardI < aPile.cards.length - 1) {
+                    // check if next card directly on top of this. Can be 1000 x faster see test, showPileRace
+                    let nextCard = aPile.cards[cardI + 1];
+                    if (nextCard.x == thisCard.x && nextCard.y == thisCard.y &&
+                        nextCard.angle == thisCard.angle) {
+                        continue;
+                    }
                 }
-                ;
                 if (area.overlaps(thisCard.area) || hadFirstVisible) {
                     hadFirstVisible = true;
                     let CardImg = pack.cards52[thisCard.cards52I];
@@ -842,6 +834,7 @@ class Table {
         // fly cards from sourcePile, sourceCardI to bottom of targetPile, then fly them back
         // maybe more than one card from sourcePile.
         // if extract1Card = true, extract sourceCardI from sourdePile and just fly that out and back
+        // extract1Card only used by Kings and card may be in middle of pile.
         if (this.cancelFlyOutBack) {
             // cancelled by deal0 / New Game
             this.cancelFlyOutBack = false;
@@ -855,14 +848,17 @@ class Table {
             ;
         }
         let sourceCard = sourcePile.cards[sourceCardI];
+        let copySourcePile;
         let returnX = sourceCard.x;
         let returnY = sourceCard.y;
         if (extract1Card) {
+            copySourcePile = new Pile();
+            copySourcePile.clone(sourcePile);
             dragPile.emptyDrag();
             dragPile.x = sourceCard.x;
             dragPile.y = sourceCard.y;
             dragPile.addCardP(sourceCard.cards52I, sourceCard.x, sourceCard.y);
-            sourceCard.visible = false;
+            sourcePile.cards.splice(sourceCardI, 1);
         }
         else {
             sourcePile.spliceToDrag(sourceCardI);
@@ -902,7 +898,8 @@ class Table {
             if (pos >= moves) {
                 clearInterval(id);
                 if (extract1Card) {
-                    sourceCard.visible = true;
+                    sourcePile.cards = [];
+                    sourcePile.clone(copySourcePile);
                     dragPile.emptyDrag();
                 }
                 else {

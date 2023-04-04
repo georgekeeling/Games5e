@@ -314,28 +314,26 @@ class Mouse {
         pArea.top < mouseY && mouseY < pArea.bottom) {
         for (cardI = pile.cards.length - 1; cardI >= 0; cardI--) {
           let card = pile.cards[cardI];
-          if (card.visible) {
-            if (card.angle == 0) {
-              if (card.x < mouseX && mouseX < (card.x + table.cardWidth) &&
-                card.y < mouseY && mouseY < (card.y + table.cardHeight)) {
-                return { pileI, cardI };
-              }
+          if (card.angle == 0) {
+            if (card.x < mouseX && mouseX < (card.x + table.cardWidth) &&
+              card.y < mouseY && mouseY < (card.y + table.cardHeight)) {
+              return { pileI, cardI };
             }
-            else {
-              // rotate mouse coords about card centre. Then check if mouse is in
-              // area where card would be at angle 0
-              // origin = center of card
-              let halfWidth = table.cardWidth / 2;
-              let halfHeight = table.cardHeight / 2;
-              let mXY = new Coords(mouseX - card.x - halfWidth,
-                mouseY - card.y - halfHeight);
-              mXY.rotate(card.angle);   // should be -card.angle?? But this works!
-              //drawPoint(mouseX, mouseY, "#FF0000");
-              //drawPoint(card.x + halfWidth + mXY.x, card.y + halfHeight + mXY.y, "#00FFFF");
-              if (-halfWidth < mXY.x && mXY.x < halfWidth &&
-                -halfHeight < mXY.y && mXY.y < halfHeight) {
-                return { pileI, cardI };
-              }
+          }
+          else {
+            // rotate mouse coords about card centre. Then check if mouse is in
+            // area where card would be at angle 0
+            // origin = center of card
+            let halfWidth = table.cardWidth / 2;
+            let halfHeight = table.cardHeight / 2;
+            let mXY = new Coords(mouseX - card.x - halfWidth,
+              mouseY - card.y - halfHeight);
+            mXY.rotate(card.angle);   // should be -card.angle?? But this works!
+            //drawPoint(mouseX, mouseY, "#FF0000");
+            //drawPoint(card.x + halfWidth + mXY.x, card.y + halfHeight + mXY.y, "#00FFFF");
+            if (-halfWidth < mXY.x && mXY.x < halfWidth &&
+              -halfHeight < mXY.y && mXY.y < halfHeight) {
+              return { pileI, cardI };
             }
           }
         }

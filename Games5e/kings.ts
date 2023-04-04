@@ -70,7 +70,6 @@ class Kings extends Game{
         if (cardI > 0) {
           let revealedCard = pile.cards[cardI - 1];
           this.dragSourcePile = pileI;
-          revealedCard.visible = true;
         }
         return Infinity;    // top card on pile so use Infinity not 1, as is traditional
       }
@@ -211,9 +210,6 @@ class Kings extends Game{
         table.gameData = 7 + fdPile.endCard().rank();
         targetPile = table.piles[table.gameData];
         fdPile.spliceToDrag(fdPile.cards.length - 1);
-        if (fdPile.cards.length > 0) {
-          fdPile.endCard().visible = true;
-        }
         table.flyPile(targetPile, targetPile.x, targetPile.y, fly2);
         return;
       case KiFanPileI:
@@ -278,7 +274,6 @@ class Kings extends Game{
       card.area.top = card.y;
       card.area.right = card.x + table.cardWidth;
       card.area.bottom = card.y + table.cardHeight;
-      card.visible = true;
     }
     pile.recalcArea();
   }

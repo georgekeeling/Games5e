@@ -4,7 +4,172 @@
  * Search for 'end game' to find all five
  */
 function test() {
-    endGames();
+    showPileRace();
+}
+function showPileRace() {
+    // we have one pile with nCards in it and race 2 versions of showCards
+    // 1) draws every card even if it is immediately covered by next card
+    // 2) more complicated, if card is completely covered by card on top, does not drraw card
+    let nCards = 2000;
+    let angle = 45;
+    table.piles = [];
+    table.addPile();
+    for (let cardI = 0; cardI < nCards; cardI++) {
+        table.piles[0].addCardP(cardI % 52, 10, 10, true, angle);
+    }
+    console.log("Racing " + nCards + " at angle " + angle + "°");
+    showCards1();
+    showCards2();
+}
+// results were
+// Racing 2000 at angle 0°
+// 1. Show time simple 1412 ms
+// 2. Show time crafty 1 ms
+// Racing 2000 at angle 0°
+// 1. Show time simple 1308 ms
+// 2. Show time crafty 1 ms
+// Racing 2000 at angle 0°
+// 1. Show time simple 1464 ms
+// 2. Show time crafty 0 ms
+// Racing 2000 at angle 0°
+// 1. Show time simple 1313 ms
+// 2. Show time crafty 1 ms
+// Racing 2000 at angle 45°
+// 1. Show time simple 1930 ms
+// 2. Show time crafty 2 ms
+// Racing 2000 at angle 45°
+// 1. Show time simple 1739 ms
+// 2. Show time crafty 1 ms
+// Racing 2000 at angle 45°
+// 1. Show time simple 1495 ms
+// 2. Show time crafty 1 ms
+function showCards1(area) {
+    const startT = new Date();
+    if (typeof (area) == 'undefined') {
+        area = new Area(0, 0, table.width, table.height);
+    }
+    else {
+        // avoid smearing, due to rounding errors?
+        area.left -= 2;
+        area.top -= 2;
+        area.right += 2;
+        area.bottom += 2;
+    }
+    table.ctx.clearRect(area.left, area.top, (area.right - area.left), (area.bottom - area.top));
+    for (let pileIx = 0; pileIx <= table.piles.length - 1; pileIx++) {
+        let thisPile = table.piles[pileIx];
+        if (!area.overlaps(thisPile.area)) {
+            continue;
+        }
+        ;
+        showPile(thisPile);
+    }
+    if (dragPile.cards.length > 0) {
+        showPile(dragPile);
+    }
+    ;
+    let endT = new Date();
+    let elapsedMs = Math.round(endT.getSeconds() * 1000 + endT.getMilliseconds() -
+        startT.getSeconds() * 1000 - startT.getMilliseconds());
+    console.log("1. Show time simple " + elapsedMs + " ms");
+    function showPile(aPile) {
+        table.ctx.save();
+        table.ctx.scale(table.cardScale, table.cardScale);
+        let hadFirstVisible = false;
+        for (let cardI = 0; cardI <= aPile.cards.length - 1; cardI++) {
+            let thisCard = aPile.cards[cardI];
+            if (area.overlaps(thisCard.area) || hadFirstVisible) {
+                hadFirstVisible = true;
+                let CardImg = pack.cards52[thisCard.cards52I];
+                if (!thisCard.faceUp) {
+                    CardImg = pack.cardBack;
+                }
+                ;
+                if (thisCard.angle != 0) {
+                    // need some work: Draw from centre of card
+                    let centX = (thisCard.x + table.cardWidth / 2) / table.cardScale;
+                    let centY = (thisCard.y + table.cardHeight / 2) / table.cardScale;
+                    table.ctx.save();
+                    table.ctx.translate(centX, centY);
+                    table.ctx.rotate(thisCard.angle * Math.PI / 180);
+                    table.ctx.drawImage(CardImg, -table.cardWidth / 2 / table.cardScale, -table.cardHeight / 2 / table.cardScale);
+                    table.ctx.restore();
+                }
+                else {
+                    table.ctx.drawImage(CardImg, thisCard.x / table.cardScale, thisCard.y / table.cardScale);
+                }
+            }
+        }
+        table.ctx.restore();
+    }
+}
+function showCards2(area) {
+    const startT = new Date();
+    if (typeof (area) == 'undefined') {
+        area = new Area(0, 0, table.width, table.height);
+    }
+    else {
+        // avoid smearing, due to rounding errors?
+        area.left -= 2;
+        area.top -= 2;
+        area.right += 2;
+        area.bottom += 2;
+    }
+    table.ctx.clearRect(area.left, area.top, (area.right - area.left), (area.bottom - area.top));
+    for (let pileIx = 0; pileIx <= table.piles.length - 1; pileIx++) {
+        let thisPile = table.piles[pileIx];
+        if (!area.overlaps(thisPile.area)) {
+            continue;
+        }
+        ;
+        showPile(thisPile);
+    }
+    if (dragPile.cards.length > 0) {
+        showPile(dragPile);
+    }
+    ;
+    let endT = new Date();
+    let elapsedMs = Math.round(endT.getSeconds() * 1000 + endT.getMilliseconds() -
+        startT.getSeconds() * 1000 - startT.getMilliseconds());
+    console.log("2. Show time crafty " + elapsedMs + " ms");
+    function showPile(aPile) {
+        table.ctx.save();
+        table.ctx.scale(table.cardScale, table.cardScale);
+        let hadFirstVisible = false;
+        for (let cardI = 0; cardI <= aPile.cards.length - 1; cardI++) {
+            let thisCard = aPile.cards[cardI];
+            if (cardI < aPile.cards.length - 1) {
+                // check if next card directly on top of this
+                let nextCard = aPile.cards[cardI + 1];
+                if (nextCard.x == thisCard.x && nextCard.y == thisCard.y &&
+                    nextCard.angle == thisCard.angle) {
+                    continue;
+                }
+            }
+            if (area.overlaps(thisCard.area) || hadFirstVisible) {
+                hadFirstVisible = true;
+                let CardImg = pack.cards52[thisCard.cards52I];
+                if (!thisCard.faceUp) {
+                    CardImg = pack.cardBack;
+                }
+                ;
+                if (thisCard.angle != 0) {
+                    // need some work: Draw from centre of card
+                    let centX = (thisCard.x + table.cardWidth / 2) / table.cardScale;
+                    let centY = (thisCard.y + table.cardHeight / 2) / table.cardScale;
+                    table.ctx.save();
+                    table.ctx.translate(centX, centY);
+                    table.ctx.rotate(thisCard.angle * Math.PI / 180);
+                    table.ctx.drawImage(CardImg, -table.cardWidth / 2 / table.cardScale, -table.cardHeight / 2 / table.cardScale);
+                    table.ctx.restore();
+                }
+                else {
+                    table.ctx.drawImage(CardImg, thisCard.x / table.cardScale, thisCard.y / table.cardScale);
+                }
+            }
+        }
+        table.ctx.restore();
+    }
 }
 function SSbug230312() {
     /*
