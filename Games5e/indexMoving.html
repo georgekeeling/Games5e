@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>5gGames</title>
+  <meta content="The five great games of patience as passed down by Michael Keeling in 2005." name="description" />
+  <link rel="stylesheet" href="g5common.css" />
+  <link rel="icon" type="image/x-icon" href="img/favico.ico">
+  <link id="sCss" rel="stylesheet" href="g5Desk.css" />
+</head>
+<body onload="moving()">
+  <div id="mainPage" ontouchmove="mouse.disableTchDefault(event)">
+    <canvas id="myCanvas" width="500" height="200"
+            style="border:1px solid #d3d3d3; background-color:green">
+    </canvas>
+
+    <div>
+      <span><button onclick="table.deal()" disabled>New Game</button></span>
+      <span><button id="btnUndo" onclick="undo.undo()" disabled>Undo</button></span>
+      <span><button id="btnRedo" onclick="undo.redo()" disabled>Redo</button></span>
+      <span><button id="btnHint" onclick="selGame.hint()" disabled>Hint</button></span>
+      <span><button onclick='toPage("optionsPage")' disabled>Options</button></span>
+      <span><button onclick='toPage("UserZonePage")' disabled>Uzone</button></span>
+      <span><button onclick='toPage("rulesPage")' disabled>Rules</button></span>
+    </div>
+  </div>
+
+  <script src="js/games5.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/siteWindow.js"></script>
+  <script src="js/migration.js"></script>
+</body>
+</html>

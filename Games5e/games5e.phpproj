@@ -4,7 +4,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <EnvName>PHPDev</EnvName>
-    <RuntimeVersion>7.4</RuntimeVersion>
+    <RuntimeVersion>8.2</RuntimeVersion>
     <SpecificPageValue>index.html</SpecificPageValue>
     <StartAction>SpecificPage</StartAction>
   </PropertyGroup>
