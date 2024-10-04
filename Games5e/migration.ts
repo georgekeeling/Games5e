@@ -48,6 +48,7 @@ function moved() {
     underline(table.ctx, destinationURL, table.width / 2, baseY + spacing * 7, 30, 
       table.ctx.fillStyle, 2, -20);
     table.ctx.fillText(destinationURL, table.width / 2, baseY + spacing * 7);
+    table.ctx.fillText("This page will expire 16 Sep 2025", table.width / 2, baseY + spacing * 9);
     if (waitTime-- <= 0) {
       window.location.href = destinationURL;
     }
