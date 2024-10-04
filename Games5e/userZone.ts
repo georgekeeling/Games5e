@@ -367,9 +367,10 @@ class UserZone {
       checkMe.checked = false;
     }
     if (checkMe.checked) {
-      choices.updateCookie("user", choices.user)
+      choices.cookies = true;
+      choices.updateCookie("user", choices.user);
     } else {
-      choices.updateCookie("user", "")
+      choices.updateCookie("user", "");
     }
   }
 
