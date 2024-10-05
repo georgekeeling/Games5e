@@ -161,6 +161,9 @@ class UncleRemus extends Game {
     // possibly do something when cardI in pileI has been clicked
     // favour un-collapse over fly because cards can always be moved by dragging
     // 1) deal, 2) collapse / uncollapse if enough, 3) fly cards if possible
+    if (pileI == URdiscardPile) {
+      return;   // bug 15.5.23, click / press on discard pile has no effect
+    }
     if (pileI == this.talonPileI) {
       // deal more
       table.dealN(true, this.dealFinished);

@@ -4,7 +4,7 @@
  * Search for 'end game' to find all five
  */
 function test() {
-  showPileRace();
+  endGames();
 }
 
 function showPileRace() {

@@ -4,7 +4,7 @@
  * Search for 'end game' to find all five
  */
 function test() {
-    showPileRace();
+    endGames();
 }
 function showPileRace() {
     // we have one pile with nCards in it and race 2 versions of showCards
