@@ -357,10 +357,11 @@ class UpdateDB {
 
 class Sound {
   // trumpets from https://pixabay.com/sound-effects/search/trumpet/
-  thankYou = document.getElementById("audioTy1") as HTMLAudioElement;
-  acePlease = document.getElementById("audioAp1") as HTMLAudioElement;
-  trumpet = document.getElementById("audioTr1") as HTMLAudioElement;
-  smallTrumpet = document.getElementById("audioTr2") as HTMLAudioElement;
+  private thankYou = document.getElementById("audioTy1") as HTMLAudioElement;
+  private acePlease = document.getElementById("audioAp1") as HTMLAudioElement;
+  private trumpet = document.getElementById("audioTr1") as HTMLAudioElement;
+  private smallTrumpet = document.getElementById("audioTr2") as HTMLAudioElement;
+  private endTime = 0;
 
   constructor() {
   }
@@ -368,22 +369,23 @@ class Sound {
   sayThankYou() {
     if (!choices.playSound) { return };
     this.thankYou.volume = 0.05;
-    this.thankYou.play();
+    this.queue (this.thankYou);
   }
   sayAcePlease() {
     if (!choices.playSound) { return };
     this.acePlease.volume = 0.05;
-    this.acePlease.play();
+    this.queue(this.acePlease);
   }
   soundTrumpet() {
+    // not compiling for some reason
     if (!choices.playSound) { return };
     this.trumpet.volume = 0.05;
-    this.trumpet.play();
+    this.queue(this.trumpet); 
   }
   soundSmallTrumpet() {
     if (!choices.playSound) { return };
     this.smallTrumpet.volume = 0.04;
-    this.smallTrumpet.play();
+    this.queue(this.smallTrumpet);
   }
   soundFail() {
     if (!choices.playSound) { return };
@@ -391,5 +393,23 @@ class Sound {
     let fail = document.getElementById("audiofl" + i) as HTMLAudioElement;
     fail.volume = 0.02;
     fail.play();
+  }
+  private queue(thisSound : HTMLAudioElement) {
+    // do not play sound until previous sound(s) finished 
+    const now = new Date();
+    const nowMs = now.getTime();
+    const thisDuration = thisSound.duration * 1000;
+    if (nowMs > this.endTime) {
+      this.endTime = nowMs + thisDuration;
+      thisSound.play();
+    }
+    else {
+      this.endTime += thisDuration;
+      const playStartTime = this.endTime - thisDuration;
+      setTimeout(playIt, playStartTime - nowMs, thisSound);
+    }
+    function playIt(thisSound: HTMLAudioElement) {
+      thisSound.play();
+    }
   }
 }

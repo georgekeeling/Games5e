@@ -340,6 +340,7 @@ class Sound {
         this.acePlease = document.getElementById("audioAp1");
         this.trumpet = document.getElementById("audioTr1");
         this.smallTrumpet = document.getElementById("audioTr2");
+        this.endTime = 0;
     }
     sayThankYou() {
         if (!choices.playSound) {
@@ -347,7 +348,7 @@ class Sound {
         }
         ;
         this.thankYou.volume = 0.05;
-        this.thankYou.play();
+        this.queue(this.thankYou);
     }
     sayAcePlease() {
         if (!choices.playSound) {
@@ -355,15 +356,16 @@ class Sound {
         }
         ;
         this.acePlease.volume = 0.05;
-        this.acePlease.play();
+        this.queue(this.acePlease);
     }
     soundTrumpet() {
+        // not compiling for some reason
         if (!choices.playSound) {
             return;
         }
         ;
         this.trumpet.volume = 0.05;
-        this.trumpet.play();
+        this.queue(this.trumpet);
     }
     soundSmallTrumpet() {
         if (!choices.playSound) {
@@ -371,7 +373,7 @@ class Sound {
         }
         ;
         this.smallTrumpet.volume = 0.04;
-        this.smallTrumpet.play();
+        this.queue(this.smallTrumpet);
     }
     soundFail() {
         if (!choices.playSound) {
@@ -382,6 +384,24 @@ class Sound {
         let fail = document.getElementById("audiofl" + i);
         fail.volume = 0.02;
         fail.play();
+    }
+    queue(thisSound) {
+        // do not play sound until previous sound(s) finished 
+        const now = new Date();
+        const nowMs = now.getTime();
+        const thisDuration = thisSound.duration * 1000;
+        if (nowMs > this.endTime) {
+            this.endTime = nowMs + thisDuration;
+            thisSound.play();
+        }
+        else {
+            this.endTime += thisDuration;
+            const playStartTime = this.endTime - thisDuration;
+            setTimeout(playIt, playStartTime - nowMs, thisSound);
+        }
+        function playIt(thisSound) {
+            thisSound.play();
+        }
     }
 }
 //# sourceMappingURL=smallClasses.js.map

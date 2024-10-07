@@ -4,7 +4,17 @@
  * Search for 'end game' to find all five
  */
 function test() {
-    endGames();
+    newSounds();
+}
+function newSounds() {
+    sound.sayAcePlease();
+    sound.soundSmallTrumpet();
+    sound.sayThankYou();
+    sound.soundTrumpet();
+    sound.sayAcePlease();
+    sound.soundSmallTrumpet();
+    sound.sayThankYou();
+    sound.soundTrumpet();
 }
 function showPileRace() {
     // we have one pile with nCards in it and race 2 versions of showCards
