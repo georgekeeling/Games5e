@@ -242,7 +242,12 @@ class SeniorWrangler extends Game {
             target.y = pile.y;
         }
         else {
-            target.y = pile.endCard().y + table.yStep;
+            if (pile.cards.length == 8) {
+                target.y = pile.endCard().y + table.yStep * 3;
+            }
+            else {
+                target.y = pile.endCard().y + table.yStep;
+            }
         }
         return pile;
     }
