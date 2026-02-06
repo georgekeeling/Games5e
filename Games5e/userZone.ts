@@ -68,6 +68,7 @@ class UserZone {
 
   showLeague(sortCol: number) {
     document.getElementById("LeagueButtonArea").hidden = true;
+    document.getElementById("crownsButton").hidden = false;
     for (let row = 0; row < this.leagueTable.length; row++) {
       this.leagueTable[row][0] = this.leagueTable[row][sortCol];
     }
@@ -154,12 +155,24 @@ class UserZone {
 
     function handleResponse(response: string) {
       document.getElementById("LeagueButtonArea").hidden = false;
+      document.getElementById("crownsButton").hidden = false;
       if (response == "no results") {
         response += " for " + user;
       }
       document.getElementById("resultTable").innerHTML = response;
     }
   }
+
+  showCrowns() {
+    // show all triple, quadruple and quintuple crown winners in database
+    updateDB.xmlhttpDo("NoUser/ShowCrowns/" + this.timeDiff, handleResponse);
+
+    function handleResponse(response: string) {
+      document.getElementById("LeagueButtonArea").hidden = false;
+      document.getElementById("crownsButton").hidden = true;
+      document.getElementById("resultTable").innerHTML = response;
+    }
+ }
 
   changeUser() {
     const nameButton = document.getElementById("nameButton") as HTMLButtonElement;

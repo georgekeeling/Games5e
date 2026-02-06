@@ -1,20 +1,20 @@
 <?php declare(strict_types=1);
 
-  // My bodge got the simple db interface using $_SERVER["CONTENT_TYPE"] to hold message!
-  $message = $_SERVER["CONTENT_TYPE"];
-  $ipAddress = $_SERVER['REMOTE_ADDR'];
-  $dbTimeZone = "America/Denver";
-  if ($ipAddress == "::1"){
-    // debugging
-    $ipAddress = "91.41.debug";
-    $dbTimeZone = "Europe/Berlin";
-  }
-  $user = parse($message, 1);
-  $actionType = parse($message, 2);
-  $gameCode = parse($message, 3);
-  $type = parse($message, 4);
+// My bodge got the simple db interface using $_SERVER["CONTENT_TYPE"] to hold message!
+$message = $_SERVER["CONTENT_TYPE"];
+$ipAddress = $_SERVER['REMOTE_ADDR'];
+$dbTimeZone = "America/Denver";
+if ($ipAddress == "::1"){
+  // debugging
+  $ipAddress = "91.41.debug";
+  $dbTimeZone = "Europe/Berlin";
+}
+$user = parse($message, 1);
+$actionType = parse($message, 2);
+$gameCode = parse($message, 3);
+$type = parse($message, 4);
 
-  switch ($actionType){
+switch ($actionType){
     case "Post":
       makePost();
       break;
@@ -35,8 +35,12 @@
       scoreIP($ipAddress, (int)parse($message, 3));
       break;
     case "ScoreUser":
-      // message like user/Score/timediff
+    // message like user/Score/timediff
       scoreUser($user, (int)parse($message, 3));
+      break;
+    case "ShowCrowns":
+    // message like NoUser/ShowCrowns/timediff
+      showCrowns((int) parse($message, 3));
       break;
     case "LogIn":
       // message like user/LogIn/password
@@ -256,6 +260,59 @@
     $conn->close();
   }
 
+  function showCrowns(int $timeDiff){
+    // show winners of all possible crowns in db
+    // modelled on function score
+    // $timeDiff only used in output echos
+    $crownsFound = 0;
+    $prevWins = array();
+    $conn = openConnection();
+    $sql = "SELECT Time,VisitorID,GameCode,Type FROM Action WHERE Type='Won' ORDER BY VisitorID,Time;";
+    $result = $conn->query($sql);
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+    if ($result->num_rows > 0) {
+      for ($rowNr = 0; $rowNr < $result->num_rows; $rowNr++) {
+        $row = $rows[$rowNr];
+        $nextWin = count($prevWins);
+        $prevWins[$nextWin][0] = getGameCode($row["GameCode"]);
+        $prevWins[$nextWin][1] = getLocalDateTime($row["Time"], $timeDiff);
+        if (checkTripleCrown($prevWins) <> ''){
+          $crownsFound++;
+          if ($crownsFound == 1){
+            // do heading
+            echo('<table>');
+            echo('<tr align="center"><th colspan="2">Possible crown holders</th></tr>');
+            echo('<tr>');
+            echo('<th align="left">Date </th>');
+            echo('<th align="left">Name </th>');
+            echo('</tr>');
+          }
+          echo('<tr>');
+          // fixed HTML concatenation and used date_format on DateTime
+          echo('<td>' . date_format($prevWins[$nextWin][1],"Y-m-d") . '</td>');
+          // like
+          // <td align="left"><a href="javascript:userZone.scoreUser1('Michael Keeling')">Michael Keeling</a></td>
+          $name = htmlspecialchars($row["VisitorID"], ENT_QUOTES);
+          echo('<td align="left"><a href="javascript:userZone.scoreUser1(\'' . $name . '\')">' . $name . '</a></td>');
+          echo('</tr>');
+        } else {
+          // not crown. Reduce $prevWins if sparated far in time.
+          while (hours_between($prevWins[$nextWin][1], $prevWins[0][1]) > $nextWin){
+            array_shift($prevWins);     // remove first element and reindex. 
+            $nextWin--;
+          }
+        }
+      }
+      if ($crownsFound > 0){
+        echo ('</table>');
+      }
+    }
+    if ($result->num_rows <= 0 || $crownsFound == 0) {
+      echo ("No crowns found in database");
+    }
+    $conn->close();
+  }
+
   function league(){
     // https://www.php.net/manual/en/function.array-multisort.php
     // could use array_multisort to sort 2D array, but leave it all to javascript
@@ -281,6 +338,28 @@
     for ($col = 0; $col <= 5; $col++) {
       echo $LeaguePoints[$col] . "/";
     }
+  }
+
+  function dbg(string $label, mixed $value = null): void
+  {
+    // debug function suggested by copilot. Usage
+    // dbg('entering checkTripleCrown', $prevWins);
+    // dbg('hours', hours_between($dt1, $dt2));
+    // needed when breakpoints cause crash
+
+    //Copilot said
+    //Install a Visual Studio PHP extension that provides syntax checking / IntelliSense 
+    // (e.g. “PHP Tools for Visual Studio” / Devsense) via 
+    // Extensions > Manage Extensions > Online. Restart VS after install.
+
+    //Devsense was already installed Updated to 1.88.18450  (? or something)
+    //when I run in debug it told me to update Xdebug or something. I obeyed.
+    //Debugging seems to work :-)
+    return;
+    $payload = is_scalar($value) ? (string) $value : print_r($value, true);
+    $line = $label . ' => ' . rtrim($payload) . PHP_EOL;
+    @file_put_contents(__DIR__ . '/debug.log', $line, FILE_APPEND | LOCK_EX);
+    @file_put_contents('php://stderr', $line);
   }
 
   function score (mysqli $conn, string $sql, int $timeDiff, bool $rl, string $user) : array {
@@ -329,26 +408,8 @@
             $row["Type"] = "Lost";
           }
         }
+        $gameI = getGameCode($row["GameCode"]);
 
-        switch ($row["GameCode"]) {
-          case "AuntyAlice":
-            $gameI = 1;
-            break;
-          case "SandS":
-            $gameI = 2;
-            break;
-          case "SeniorWrangler":
-            $gameI = 3;
-            break;
-          case "UncleRemus":
-            $gameI = 4;
-            break;
-          case "Kings":
-            $gameI = 5;
-            break;
-          default:
-            $gameI = 6;
-        }
         $played[0]++;
         $played[$gameI]++;
         switch($row["Type"]){
@@ -452,48 +513,72 @@
     }
   }
 
-  function checkTripleCrown (array $prevWins): string {
-    // check if triple crown or better
-    // must be different games and done in less than 3,4 or 5 hours
-    $numWins = count($prevWins);
-    if ($numWins < 3) {
-      return "";
-    }
-    $diff = date_diff($prevWins[0][1], $prevWins[$numWins - 1][1]);
-    if ($diff->y > 0 || $diff->d > 0) {
-      return "";
-    }
-    $hours = $diff->h + $diff->i / 60;
-    if ($hours > $numWins) {
-      return "";
-    }
-
-    $wins = array (99,0,0,0,0,0);
-    for ($i = 0; $i < $numWins; $i++) {
-      $wins[$prevWins[$i][0]]++;
-    }
-    $differentWins = 0;
-    for ($i = 1; $i <= 5; $i++) {
-      if ($wins[$i] > 0) {$differentWins++;}
-    }
-
-// Hurrah!
-    $reply = " <strong>";
-    switch ($differentWins) {
-      case 3:
-        $reply .= "Triple";
-        break;
-      case 4:
-        $reply .= "Quadruple";
-        break;
-      case 5:
-        $reply .= "Quintuple";
-        break;
+  function getGameCode (string $gameName): int {
+    switch ($gameName) {
+      case "AuntyAlice":
+        return 1;
+      case "SandS":
+        return 2;
+      case "SeniorWrangler":
+        return 3;
+      case "UncleRemus":
+        return 4;
+      case "Kings":
+        return 5;
       default:
-        return "";
-        break;
+        return 6;
     }
-    return $reply . " Crown </strong>";
+  }
+
+function checkTripleCrown(array $prevWins): string
+{
+  // check if triple crown or better
+  // must be different games and done in less than 3,4 or 5 hours
+  // this function never reduces entries in $prevWins. It might look like it but NOT!
+  $numWins = count($prevWins);
+  if ($numWins < 3) {
+    return "";
+  }
+  $hourDiff = hours_between($prevWins[$numWins - 1][1], $prevWins[0][1]);
+  if ($hourDiff > $numWins) {
+    // unset($prevWins[0]); causes crash
+    array_shift($prevWins);     // remove first element and reindex. It is different day, fixes bug 2.2.26
+    return checkTripleCrown($prevWins);
+  }
+
+  $wins = array(99, 0, 0, 0, 0, 0);
+  for ($i = 0; $i < $numWins; $i++) {
+    $wins[$prevWins[$i][0]]++;
+  }
+  $differentWins = 0;
+  for ($i = 1; $i <= 5; $i++) {
+    if ($wins[$i] > 0) {
+      $differentWins++;
+    }
+  }
+
+  // Hurrah!
+  $reply = " <strong>";
+  switch ($differentWins) {
+    case 3:
+      $reply .= "Triple";
+      break;
+    case 4:
+      $reply .= "Quadruple";
+      break;
+    case 5:
+      $reply .= "Quintuple";
+      break;
+    default:
+      return "";
+  }
+  return $reply . " Crown </strong>";
+}
+
+function hours_between(DateTime $a, DateTime $b): float
+  {
+  $seconds = abs((int) $a->format('U') - (int) $b->format('U'));
+  return $seconds / 3600.0;
   }
 
   function logIn(string $user, string $password) {

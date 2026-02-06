@@ -211,10 +211,6 @@
         <button id="newUserButton" onclick="userZone.newUser()">New User</button>
       </div>
 
-      <div class="row3 col3">
-        <button id="closeButton" onclick="userZone.close()" tabindex="4">Back to Game</button>
-      </div>
-
       <div id="RememberMe" class="row2 col1">
         Remember me:
       </div>
@@ -251,11 +247,19 @@
         </span>
       </div>
 
-      <div id="LeagueButtonArea" class="row5 col1" hidden>
+      <div class="row5 col1">
+        <button id="crownsButton" onclick="userZone.showCrowns()" tabindex="5">Crowns</button>
+      </div>
+
+      <div id="LeagueButtonArea" class="row5 col2" hidden>
         <button id="LeagueButton" onclick="userZone.showLeague(2)">Show League</button>
       </div>
 
-      <div class="row6 col1">
+           <div class="row5 col3">
+        <button id="closeButton" onclick="userZone.close()" tabindex="4">Back to Game</button>
+      </div>
+
+ <div class="row6 col1">
         <span id="resultTable"></span>
       </div>
     </div>
