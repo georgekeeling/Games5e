@@ -3,7 +3,7 @@
 // My bodge got the simple db interface using $_SERVER["CONTENT_TYPE"] to hold message!
 $message = $_SERVER["CONTENT_TYPE"];
 $ipAddress = $_SERVER['REMOTE_ADDR'];
-$dbTimeZone = "America/Denver";
+$dbTimeZone = "Europe/London";
 if ($ipAddress == "::1"){
   // debugging
   $ipAddress = "91.41.debug";
